@@ -1,7 +1,6 @@
 <template>
   <div class="m-header">
     <div class="icon"></div>
-    <h1 class="text">Chicken Music</h1>
   </div>
 </template>
 
@@ -22,11 +21,11 @@
       display: inline-block
       vertical-align: top
       margin-top: 6px
-      width: 30px
+      width: 88px
       height: 32px
       margin-right: 9px
       bg-image('logo')
-      background-size: 30px 32px
+      background-size: 88px 32px
     .text
       display: inline-block
       vertical-align: top
