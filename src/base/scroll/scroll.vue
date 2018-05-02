@@ -60,7 +60,7 @@
           })
         }
 
-        //上拉刷新
+        // 上拉刷新
         if (this.pullUp) {
           this.scroll.on('scrollEnd', () => {
             if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
