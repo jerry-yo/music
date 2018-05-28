@@ -60,7 +60,10 @@
         this.$refs.progressBtnWrapper.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
       },
       progressClick (e) {
-        console.log(e)
+        // 当我们点击 progressBtn 的时候 ，e.offsetX 获取不对
+        const rect = this.$refs.progressBar.getBoundingClientRect()
+        const offsetWidth = e.pageX - rect.left
+        this._offset(offsetWidth)
         this._offset(e.offsetX)
         this._triggerPercent()
       }
