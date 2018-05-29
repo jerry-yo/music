@@ -1,6 +1,6 @@
 <template>
-  <div class="singer">
-    <listView :data="singers" @select="selectSinger"></listView>
+  <div class="singer" ref="singer">
+    <listView :data="singers" @select="selectSinger" ref="list"></listView>
     <router-view></router-view>
   </div>
 </template>
@@ -11,10 +11,12 @@
   import Singer from '@/common/js/singer'
   import listView from '@/base/listview/listview'
   import {mapMutations} from 'vuex'
+  import {playListMixin} from '@/common/js/mixin'
 
   const HOT_NAME = '热门'
   const HOT_SINGER_LEN = 10
   export default {
+    mixins: [playListMixin],
     data () {
       return {
         singers: []
@@ -24,6 +26,11 @@
       this._getSingerList()
     },
     methods: {
+      handlePlayList (playList) {
+        const bottom = playList.length > 0 ? '60px' : '0'
+        this.$refs.singer.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
       selectSinger (singer) {
         this.$router.push({
           path: `/singer/${singer.id}`

@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <Scroll class="recommend-content" :data="discList" ref="scroll">
       <div class="main-position">
         <div v-if="recommends.length" class="slider-wrapper">
@@ -14,7 +14,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li v-for="(item, index) in discList" :key="index" class="item">
+            <li v-for="(item, index) in discList" :key="index" class="item" @click="selectItem(item)">
               <div class="icon">
                 <img v-lazy="item.imgurl" alt="" width="60" height="60">
               </div>
@@ -30,6 +30,7 @@
         <Loading></Loading>
       </div>
     </Scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -39,7 +40,10 @@
   import Loading from '@/base/loading/loading'
   import {getRecommend, getDiscList} from '@/api/recommend'
   import {ERR_OK} from '@/api/config'
+  import {mapGetters, mapMutations} from 'vuex'
+  import {playListMixin} from '@/common/js/mixin'
   export default {
+    mixins: [playListMixin],
     data () {
       return {
         recommends: [],
@@ -52,7 +56,17 @@
         this._getDiscList()
       }, 1000)
     },
+    computed: {
+      ...mapGetters([
+        'playList'
+      ])
+    },
     methods: {
+      handlePlayList () {
+        const bottom = this.playList.length > 0 ? '60px' : ''
+        this.$refs.recommend.style.bottom = bottom
+        this.$refs.scroll.refresh()
+      },
       _getRecommend () {
         getRecommend().then((res) => {
           if (res.code === ERR_OK) {
@@ -65,7 +79,6 @@
         getDiscList().then(res => {
           if (res.code === ERR_OK) {
             this.discList = res.data.list
-            console.log(res)
           }
         })
       },
@@ -74,7 +87,16 @@
           this.$refs.scroll.refresh()
           this.checkLoaded = true
         }
-      }
+      },
+      selectItem (item) {
+        this.$router.push({
+          path: `/recommend/${item.dissid}`
+        })
+        this.setDisc(item)
+      },
+      ...mapMutations({
+        setDisc: 'SET_DISC'
+      })
     },
     components: {
       Slider,
