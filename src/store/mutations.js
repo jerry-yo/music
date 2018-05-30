@@ -24,6 +24,9 @@ const matutaions = {
   },
   [types.SET_DISC] (state, disc) {
     state.disc = disc
+  },
+  [types.SET_TOPLIST] (state, list) {
+    state.topList = list
   }
 }
 
