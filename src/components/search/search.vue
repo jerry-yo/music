@@ -18,6 +18,7 @@
     <div class="search-result">
       <suggest :query="query"></suggest>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -26,6 +27,7 @@
   import suggest from '@/components/suggest/suggest'
   import {getHotKey} from '@/api/search'
   import {ERR_OK} from '@/api/config'
+
   export default {
     data () {
       return {

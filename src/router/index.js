@@ -39,14 +39,22 @@ export default new Router({
     {
       path: '/rank',
       component: Rank,
-      children: [{
-        path: ':id',
-        component: TopList
-      }]
+      children: [
+        {
+          path: ':id',
+          component: TopList
+        }
+      ]
     },
     {
       path: '/search',
-      component: Search
+      component: Search,
+      children: [
+        {
+          path: ':id',
+          component: SingerDetail
+        }
+      ]
     }
   ]
 })
