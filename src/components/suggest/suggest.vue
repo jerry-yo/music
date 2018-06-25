@@ -2,7 +2,9 @@
   <Scroll class="suggest"
           :data="result"
           :pull-up="pullup"
+          :beforeScroll="beforeScroll"
           @scrollToEnd="searchMore"
+          @beforeScroll="listScroll"
           ref="suggest">
     <ul class="suggest-list">
       <li @click="selectItem(item)" class="suggest-item" v-for="item in result">
@@ -48,7 +50,8 @@
         page: 1,
         result: [],
         pullup: true,
-        hasMore: true
+        hasMore: true,
+        beforeScroll: true
       }
     },
     methods: {
@@ -127,6 +130,10 @@
         } else {
           this.insertSong(item)
         }
+        this.$emit('select')
+      },
+      listScroll () {
+        this.$emit('listScroll')
       },
       ...mapMutations({
         setSinger: 'SET_SINGER'
