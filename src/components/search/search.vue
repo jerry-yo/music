@@ -3,56 +3,77 @@
     <div class="search-box-wrapper">
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
-    <div class="shortcut-wrapper" v-show="!query">
-      <div class="shortcut">
-        <div class="hot-key">
-          <h1 class="title">热门搜索</h1>
-          <ul>
-            <li class="item" v-for="item in hotKey" @click="addQuery(item.k)">
-              <span>{{item.k}}</span>
-            </li>
-          </ul>
+    <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
+      <Scroll class="shortcut" ref="shortcut" :data="shortcut">
+        <div class="">
+          <div class="hot-key">
+            <h1 class="title">热门搜索</h1>
+            <ul>
+              <li class="item" v-for="item in hotKey" @click="addQuery(item.k)">
+                <span>{{item.k}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="search-history" v-show="searchHistory.length">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="clearAll">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <SearchList :searches="searchHistory" @select="addQuery" @delete="deleteSearchHistory"></SearchList>
+          </div>
         </div>
-        <div class="search-history" v-show="searchHistory.length">
-          <h1 class="title">
-            <span class="text">搜索历史</span>
-            <span class="clear">
-              <i class="icon-clear"></i>
-            </span>
-          </h1>
-        </div>
-      </div>
+      </Scroll>
     </div>
-    <div class="search-result" v-show="query">
-      <suggest :query="query" @select="saveSearch" @listScroll="blurInput"> </suggest>
+    <div ref="searchResult" class="search-result" v-show="query">
+      <suggest ref="suggest" :query="query" @select="saveSearch" @listScroll="blurInput"> </suggest>
     </div>
+    <confirm ref="confirm" :text="'是否清空所有搜索历史?'" :confirmBtnText="'清空'" @confirm="clearSearchHistory"></confirm>
     <router-view></router-view>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import SearchBox from '@/base/search-box/search-box'
+  import Scroll from '@/base/scroll/scroll'
   import suggest from '@/components/suggest/suggest'
+  import confirm from '@/base/confirm/confirm'
   import {getHotKey} from '@/api/search'
   import {ERR_OK} from '@/api/config'
   import {mapActions, mapGetters} from 'vuex'
+  import SearchList from '@/base/search-list/search-list'
+  import {playListMixin} from '@/common/js/mixin'
 
   export default {
+    mixins: [playListMixin],
     data () {
       return {
         hotKey: [],
-        query: ''
+        query: '',
+        showConfirm: false
       }
     },
     created () {
       this._getHotKey()
     },
     computed: {
+      shortcut () {
+        return this.hotKey.concat(this.searchHistory)
+      },
       ...mapGetters([
         'searchHistory'
       ])
     },
     methods: {
+      handlePlayList (playList) {
+        console.log('000000----')
+        const bottom = playList.length > 0 ? '60px' : ''
+        this.$refs.shortcutWrapper.style.bottom = bottom
+        this.$refs.shortcut.refresh()
+        this.$refs.searchResult.style.bottom = bottom
+        this.$refs.suggest.refresh()
+      },
       addQuery (query) {
         this.$refs.searchBox.setQuery(query)
       },
@@ -72,13 +93,30 @@
       saveSearch () {
         this.saveSearchHistory(this.query)
       },
+      clearAll () {
+        this.$refs.confirm.show()
+      },
       ...mapActions([
-        'saveSearchHistory'
+        'saveSearchHistory',
+        'deleteSearchHistory',
+        'clearSearchHistory'
       ])
+    },
+    watch: {
+      query (newQuery) {
+        if (!newQuery) {
+          setTimeout(() => {
+            this.$refs.shortcut.refresh()
+          }, 20)
+        }
+      }
     },
     components: {
       SearchBox,
-      suggest
+      suggest,
+      confirm,
+      Scroll,
+      SearchList
     }
   }
 </script>

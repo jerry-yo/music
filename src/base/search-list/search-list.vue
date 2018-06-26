@@ -5,6 +5,7 @@
         class="search-item"
         v-for="item in searches"
         :key="item"
+        @click="selectItem(item)"
       >
         <span class="text">{{item}}</span>
         <span class="icon" @click.stop="deleteOne(item)">
@@ -21,6 +22,14 @@
       searches: {
         type: Array,
         default: []
+      }
+    },
+    methods: {
+      selectItem (item) {
+        this.$emit('select', item)
+      },
+      deleteOne (item) {
+        this.$emit('delete', item)
       }
     }
   }
