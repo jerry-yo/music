@@ -67,7 +67,6 @@
     },
     methods: {
       handlePlayList (playList) {
-        console.log('000000----')
         const bottom = playList.length > 0 ? '60px' : ''
         this.$refs.shortcutWrapper.style.bottom = bottom
         this.$refs.shortcut.refresh()
