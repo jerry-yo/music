@@ -1,6 +1,6 @@
 <template>
-  <div class="search-list" v-show="searches.length">
-    <ul>
+  <div class="search-list" v-show="searches.length" :refreshDelay="refreshDelay">
+    <transition-group name="list" tag="ul">
       <li
         class="search-item"
         v-for="item in searches"
@@ -12,7 +12,7 @@
           <i class="icon-delete"></i>
         </span>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
@@ -22,6 +22,11 @@
       searches: {
         type: Array,
         default: []
+      }
+    },
+    data () {
+      return {
+        refreshDelay: 100
       }
     },
     methods: {

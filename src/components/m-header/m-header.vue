@@ -1,6 +1,9 @@
 <template>
   <div class="m-header">
     <div class="icon"></div>
+    <router-link to="/user" class="mine" tag="div">
+      <i class="icon-mine"></i>
+    </router-link>
   </div>
 </template>
 

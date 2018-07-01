@@ -4,7 +4,7 @@
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
     <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
-      <Scroll class="shortcut" ref="shortcut" :data="shortcut">
+      <Scroll class="shortcut" ref="shortcut" :data="shortcut" :refreshDelay="refreshDelay">
         <div class="">
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -41,16 +41,15 @@
   import confirm from '@/base/confirm/confirm'
   import {getHotKey} from '@/api/search'
   import {ERR_OK} from '@/api/config'
-  import {mapActions, mapGetters} from 'vuex'
+  import {mapActions} from 'vuex'
   import SearchList from '@/base/search-list/search-list'
-  import {playListMixin} from '@/common/js/mixin'
+  import {playListMixin, searchMixin} from '@/common/js/mixin'
 
   export default {
-    mixins: [playListMixin],
+    mixins: [playListMixin, searchMixin],
     data () {
       return {
         hotKey: [],
-        query: '',
         showConfirm: false
       }
     },
@@ -60,10 +59,7 @@
     computed: {
       shortcut () {
         return this.hotKey.concat(this.searchHistory)
-      },
-      ...mapGetters([
-        'searchHistory'
-      ])
+      }
     },
     methods: {
       handlePlayList (playList) {
@@ -73,12 +69,6 @@
         this.$refs.searchResult.style.bottom = bottom
         this.$refs.suggest.refresh()
       },
-      addQuery (query) {
-        this.$refs.searchBox.setQuery(query)
-      },
-      onQueryChange (query) {
-        this.query = query
-      },
       _getHotKey () {
         getHotKey().then((res) => {
           if (res.code === ERR_OK) {
@@ -86,18 +76,10 @@
           }
         })
       },
-      blurInput () {
-        this.$refs.searchBox.blur()
-      },
-      saveSearch () {
-        this.saveSearchHistory(this.query)
-      },
       clearAll () {
         this.$refs.confirm.show()
       },
       ...mapActions([
-        'saveSearchHistory',
-        'deleteSearchHistory',
         'clearSearchHistory'
       ])
     },
