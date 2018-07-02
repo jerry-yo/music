@@ -6,9 +6,9 @@ import store from './store'
 import fastclick from 'fastclick'
 import VueLazyLoad from 'vue-lazyload'
 
-// Vue.config.productionTip = false
-
 import 'common/stylus/index.styl'
+
+import '@/common/js/vconsole'
 
 fastclick.attach(document.body)
 
